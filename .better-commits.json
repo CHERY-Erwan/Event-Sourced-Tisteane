@@ -68,7 +68,7 @@
                 "value": "chore",
                 "label": "chore",
                 "hint": "Other changes that do not modify src or test files",
-                "emoji": "🧹",
+                "emoji": "🔧",
                 "trailer": "Changelog: chore"
             },
             {
