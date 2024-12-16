@@ -15,13 +15,11 @@ return new class extends Migration
             $table->id();
             $table->uuid('bundle_id');
             $table->uuid('product_variant_id')->nullable();
-            $table->uuid('product_id')->nullable();
             $table->integer('quantity')->default(1);
             $table->timestamps();
 
             $table->foreign('bundle_id')->references('id')->on('bundles')->onDelete('cascade');
             $table->foreign('product_variant_id')->references('id')->on('product_variants')->onDelete('cascade');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
 
     }
