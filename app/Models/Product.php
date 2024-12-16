@@ -15,9 +15,7 @@ class Product extends Model
     use HasTranslations;
     use SoftDeletes;
 
-    protected $fillable = [
-        'id', 'category_id', 'sku', 'slug', 'label', 'description', 'stock', 'is_active', 'is_featured',
-    ];
+    protected $fillable = ['id', 'category_id', 'sku', 'slug', 'label', 'description', 'stock', 'is_active', 'is_featured'];
 
     public $translatable = ['label', 'description'];
 
