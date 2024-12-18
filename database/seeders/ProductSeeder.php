@@ -11,14 +11,14 @@ class ProductSeeder extends Seeder
 {
     public function run()
     {
-        $solarLampsCategoryId = Category::where('slug', 'solar-lamps')->value('id');
-        $solarLidsCategoryId = Category::where('slug', 'solar-lids')->value('id');
+        $solarLampsCategoryId = Category::where('slug', 'solar-lamps')->value('uuid');
+        $solarLidsCategoryId = Category::where('slug', 'solar-lids')->value('uuid');
 
 
         $products = [
             [
-                'id' => Str::uuid(),
-                'category_id' => $solarLampsCategoryId,
+                'uuid' => Str::uuid(),
+                'category_uuid' => $solarLampsCategoryId,
                 'sku' => 'LEO-001',
                 'slug' => 'leonardo-solar-lamp',
                 'label' => ['en' => 'Leonardo Solar Lamp', 'fr' => 'Lampe Solaire Leonardo'],
@@ -28,8 +28,8 @@ class ProductSeeder extends Seeder
                 'is_featured' => true,
             ],
             [
-                'id' => Str::uuid(),
-                'category_id' => $solarLampsCategoryId,
+                'uuid' => Str::uuid(),
+                'category_uuid' => $solarLampsCategoryId,
                 'sku' => 'PDL-002',
                 'slug' => 'pot-de-lait-solar-lamp',
                 'label' => ['en' => 'Pot de lait Solar Lamp', 'fr' => 'Lampe Solaire Pot de lait'],
@@ -39,8 +39,8 @@ class ProductSeeder extends Seeder
                 'is_featured' => true,
             ],
             [
-                'id' => Str::uuid(),
-                'category_id' => $solarLidsCategoryId,
+                'uuid' => Str::uuid(),
+                'category_uuid' => $solarLidsCategoryId,
                 'sku' => 'CST-003',
                 'slug' => 'solar-lid-t082',
                 'label' => ['en' => 'Solar Lid T082', 'fr' => 'Couvercle Solaire T082'],

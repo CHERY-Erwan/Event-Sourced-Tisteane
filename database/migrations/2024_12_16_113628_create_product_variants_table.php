@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_variants', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('product_id');
+            $table->uuid('uuid')->primary();
+            $table->uuid('product_uuid');
             $table->string('sku')->unique();
             $table->string('slug')->unique();
             $table->json('size')->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('product_uuid')->references('uuid')->on('products')->onDelete('cascade');
         });
     }
 

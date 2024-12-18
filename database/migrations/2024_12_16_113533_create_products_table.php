@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('category_id')->nullable();
+            $table->uuid('uuid')->primary();
+            $table->uuid('category_uuid')->nullable();
             $table->string('sku')->unique();
             $table->string('slug')->unique();
             $table->json('label')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
+            $table->foreign('category_uuid')->references('uuid')->on('categories')->onDelete('set null');
         });
     }
 

@@ -12,22 +12,22 @@ class ProductAttributeSeeder extends Seeder
     {
         $attributes = [
             [
-                'product_variant_id' => ProductVariant::where('sku', 'LEO-S-RED')->first()->id,
+                'product_variant_uuid' => ProductVariant::where('sku', 'LEO-S-RED')->first()->uuid,
                 'key' => 'Battery Life',
                 'value' => '10 hours',
             ],
             [
-                'product_variant_id' => ProductVariant::where('sku', 'LEO-S-RED')->first()->id,
+                'product_variant_uuid' => ProductVariant::where('sku', 'LEO-S-RED')->first()->uuid,
                 'key' => 'Material',
                 'value' => 'Bamboo',
             ],
             [
-                'product_variant_id' => ProductVariant::where('sku', 'LEO-S-BLUE')->first()->id,
+                'product_variant_uuid' => ProductVariant::where('sku', 'LEO-S-BLUE')->first()->uuid,
                 'key' => 'Material',
                 'value' => 'Recycled Plastic',
             ],
             [
-                'product_variant_id' => ProductVariant::where('sku', 'LEO-M-RED')->first()->id,
+                'product_variant_uuid' => ProductVariant::where('sku', 'LEO-M-RED')->first()->uuid,
                 'key' => 'Wood Type',
                 'value' => 'Oak',
             ],

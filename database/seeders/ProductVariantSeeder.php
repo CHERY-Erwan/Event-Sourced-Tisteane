@@ -13,8 +13,8 @@ class ProductVariantSeeder extends Seeder
     {
         $variants = [
             [
-                'id' => Str::uuid(),
-                'product_id' => Product::where('slug', 'leonardo-solar-lamp')->first()->id,
+                'uuid' => Str::uuid(),
+                'product_uuid' => Product::where('slug', 'leonardo-solar-lamp')->first()->uuid,
                 'sku' => 'LEO-S-RED',
                 'slug' => 'leonardo-solar-lamp-red-small',
                 'size' => ['en' => 'Small', 'fr' => 'Petit'],
@@ -23,8 +23,8 @@ class ProductVariantSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'id' => Str::uuid(),
-                'product_id' => Product::where('slug', 'leonardo-solar-lamp')->first()->id,
+                'uuid' => Str::uuid(),
+                'product_uuid' => Product::where('slug', 'leonardo-solar-lamp')->first()->uuid,
                 'sku' => 'LEO-S-BLUE',
                 'slug' => 'leonardo-solar-lamp-blue-small',
                 'size' => ['en' => 'Small', 'fr' => 'Petit'],
@@ -33,8 +33,8 @@ class ProductVariantSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'id' => Str::uuid(),
-                'product_id' => Product::where('slug', 'leonardo-solar-lamp')->first()->id,
+                'uuid' => Str::uuid(),
+                'product_uuid' => Product::where('slug', 'leonardo-solar-lamp')->first()->uuid,
                 'sku' => 'LEO-M-RED',
                 'slug' => 'leonardo-solar-lamp-red-medium',
                 'size' => ['en' => 'Medium', 'fr' => 'Moyen'],

@@ -16,7 +16,9 @@ class ProductVariant extends Model
     use HasUuids;
     use HasTranslations;
 
-    protected $fillable = ['id', 'product_id', 'sku', 'slug', 'size', 'color', 'price', 'is_active'];
+    protected $primaryKey = 'uuid';
+
+    protected $fillable = ['product_uuid', 'sku', 'slug', 'size', 'color', 'price', 'is_active'];
 
     public $translatable = ['size', 'color'];
 
@@ -27,11 +29,11 @@ class ProductVariant extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Product::class, 'product_uuid', 'uuid');
     }
 
     public function attributes()
     {
-        return $this->hasMany(ProductAttribute::class, 'product_variant_id');
+        return $this->hasMany(ProductAttribute::class, 'product_variant_uuid');
     }
 }

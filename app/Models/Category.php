@@ -15,12 +15,14 @@ class Category extends Model
     use HasTranslations;
     use SoftDeletes;
 
-    protected $fillable = ['id', 'label', 'slug'];
+    protected $primaryKey = 'uuid';
+
+    protected $fillable = ['label', 'slug'];
 
     public $translatable = ['label'];
 
     public function products()
     {
-        return $this->hasMany(Product::class, 'category_id');
+        return $this->hasMany(Product::class, 'category_uuid', 'uuid');
     }
 }

@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
-    protected $fillable = ['user_id', 'session_id'];
+    use HasUuids;
+
+    protected $primaryKey = 'uuid';
+
+    protected $fillable = ['user_uuid', 'session_id'];
 
     public function items()
     {
-        return $this->hasMany(CartItem::class, 'cart_id');
+        return $this->hasMany(CartItem::class, 'cart_uuid', 'uuid');
     }
 }

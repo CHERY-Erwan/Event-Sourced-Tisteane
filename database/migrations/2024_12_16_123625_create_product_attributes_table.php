@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('product_attributes', function (Blueprint $table) {
             $table->id();
-            $table->uuid('product_variant_id')->nullable();
+            $table->uuid('product_variant_uuid')->nullable();
             $table->string('key');
             $table->string('value');
             $table->timestamps();
 
-            $table->foreign('product_variant_id')->references('id')->on('product_variants')->onDelete('cascade');
+            $table->foreign('product_variant_uuid')->references('uuid')->on('product_variants')->onDelete('cascade');
         });
     }
 

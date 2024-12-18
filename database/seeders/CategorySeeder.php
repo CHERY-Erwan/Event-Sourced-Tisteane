@@ -12,12 +12,12 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'id' => Str::uuid(),
+                'uuid' => Str::uuid(),
                 'label' => ['en' => 'Solar lamps', 'fr' => 'Lampes solaires'],
                 'slug' => 'solar-lamps',
             ],
             [
-                'id' => Str::uuid(),
+                'uuid' => Str::uuid(),
                 'label' => ['en' => 'Solar lids', 'fr' => 'Couvercles solaires'],
                 'slug' => 'solar-lids',
             ],
