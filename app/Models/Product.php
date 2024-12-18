@@ -17,7 +17,7 @@ class Product extends Model
 
     protected $primaryKey = 'uuid';
 
-    protected $fillable = ['category_uuid', 'sku', 'slug', 'label', 'description', 'stock', 'is_active', 'is_featured'];
+    protected $fillable = ['uuid', 'category_uuid', 'sku', 'slug', 'label', 'description', 'stock', 'is_active', 'is_featured'];
 
     public $translatable = ['label', 'description'];
 

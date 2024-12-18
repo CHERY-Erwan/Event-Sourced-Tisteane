@@ -9,7 +9,6 @@ use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-
 class ProductVariant extends Model
 {
     use HasFactory;
@@ -18,7 +17,7 @@ class ProductVariant extends Model
 
     protected $primaryKey = 'uuid';
 
-    protected $fillable = ['product_uuid', 'sku', 'slug', 'size', 'color', 'price', 'is_active'];
+    protected $fillable = ['uuid', 'product_uuid', 'sku', 'slug', 'size', 'color', 'price', 'is_active'];
 
     public $translatable = ['size', 'color'];
 

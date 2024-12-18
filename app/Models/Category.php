@@ -17,7 +17,7 @@ class Category extends Model
 
     protected $primaryKey = 'uuid';
 
-    protected $fillable = ['label', 'slug'];
+    protected $fillable = ['uuid', 'label', 'slug'];
 
     public $translatable = ['label'];
 
