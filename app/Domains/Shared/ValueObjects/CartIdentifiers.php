@@ -10,8 +10,8 @@ use Ramsey\Uuid\Uuid;
 final class CartIdentifiers
 {
     public function __construct(
-        public readonly ?string $customerUuid,
-        public readonly ?string $sessionId,
+        private readonly ?string $customerUuid,
+        private readonly ?string $sessionId,
     ) {
         $this->validate();
     }
@@ -60,6 +60,16 @@ final class CartIdentifiers
     private function isValidSessionId(string $sessionId): bool
     {
         return preg_match('/^[a-zA-Z0-9]{32,64}$/', $sessionId) === 1;
+    }
+
+    public function customerUuid(): ?string
+    {
+        return $this->customerUuid;
+    }
+
+    public function sessionId(): ?string
+    {
+        return $this->sessionId;
     }
 
     /**

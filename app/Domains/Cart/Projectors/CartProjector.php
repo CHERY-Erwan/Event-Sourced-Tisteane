@@ -14,8 +14,8 @@ class CartProjector extends Projector
             ->writeable()
             ->create([
                 'uuid' => $event->aggregateRootUuid(),
-                'customer_uuid' => $event->customerUuid,
-                'session_id' => $event->sessionId,
+                'customer_uuid' => $event->cartIdentifiers->customerUuid(),
+                'session_id' => $event->cartIdentifiers->sessionId(),
             ]);
     }
 }
