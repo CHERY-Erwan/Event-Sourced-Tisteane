@@ -4,45 +4,16 @@ namespace Tests\Unit\Domains\Cart;
 
 use App\Domains\Cart\CartAggregateRoot;
 use App\Domains\Cart\Events\CartInitialized;
-use App\Domains\Cart\Projectors\CartProjector;
 use App\Domains\Shared\ValueObjects\CartIdentifiers;
-use Symfony\Component\Routing\Exception\InvalidParameterException;
-use Tests\TestCase;
 
-class CartAggregateRootTest extends TestCase
-{
-    public const CART_UUID = 'fake-cart-uuid';
-    public const FAKE_SESSION_ID = 'fake-session-id';
+const FAKE_SESSION_ID = 'A1bC2dE3fG4hI5jK6L7mN8oP9qR0sT1uV';
+const CART_UUID = 'fake-cart-uuid-must-be-valid';
 
-    public function test_cart_can_be_initialized(): void
-    {
-        CartAggregateRoot::fake(self::CART_UUID)
-            ->given([])
-            ->when(fn(CartAggregateRoot $aggregate) => $aggregate->initializeCart(CartIdentifiers::with(null, self::FAKE_SESSION_ID)))
-            ->assertRecorded([
-                new CartInitialized(null, self::FAKE_SESSION_ID),
-            ]);
-    }
-
-    public function test_cart_cannot_be_initialized_without_customer_or_session_id(): void
-    {
-        $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage('Customer UUID or Session ID is required');
-
-        CartAggregateRoot::fake(self::CART_UUID)
-            ->given([])
-            ->when(fn(CartAggregateRoot $aggregate) => $aggregate->initializeCart(CartIdentifiers::with(null, null)));
-    }
-
-    public function test_cart_projection_is_created_when_cart_is_initialized(): void
-    {
-        $event = new CartInitialized('customer-uuid', 'session-id');
-        CartProjector::handle($event);
-
-        $this->assertDatabaseHas('carts', [
-            'uuid' => $event->aggregateRootUuid(),
-            'customer_uuid' => 'customer-uuid',
-            'session_id' => 'session-id',
+it('can initialize a cart', function () {
+    CartAggregateRoot::fake(CART_UUID)
+        ->given([])
+        ->when(fn(CartAggregateRoot $aggregate) => $aggregate->initializeCart(CartIdentifiers::with(null, FAKE_SESSION_ID)))
+        ->assertRecorded([
+            new CartInitialized(null, FAKE_SESSION_ID),
         ]);
-    }
-}
+});

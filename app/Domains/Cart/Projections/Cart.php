@@ -18,7 +18,6 @@ use Ramsey\Uuid\UuidInterface;
 class Cart extends Projection
 {
     use HasUuids;
-    use HasFactory;
 
     protected $primaryKey = 'uuid';
 

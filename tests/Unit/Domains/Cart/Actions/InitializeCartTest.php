@@ -3,57 +3,61 @@
 namespace Tests\Unit\Domains\Cart\Actions;
 
 use App\Domains\Cart\Actions\InitializeCart;
-use App\Domains\Cart\Events\CartInitialized;
-use App\Domains\Cart\Projections\Cart;
-use Database\Factories\CartFactory;
-use Tests\TestCase;
+use App\Domains\Shared\ValueObjects\CartIdentifiers;
+use Illuminate\Support\Str;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\Routing\Exception\InvalidParameterException;
+use Tests\Unit\Domains\Cart\Factories\CartFactory;
 
-class InitializeCartTest extends TestCase
-{
-    public const CUSTOMER_UUID = 'fake-customer-uuid';
-    public const SESSION_ID = 'fake-session-id';
+use function Pest\Laravel\assertDatabaseCount;
 
-    public function test_it_returns_existing_cart(): void
-    {
-        $existingCart = CartFactory::new()->create([
-            'customer_uuid' => null,
-            'session_id' => self::SESSION_ID,
-        ]);
+uses(RefreshDatabase::class);
 
-        $event = new CartInitialized(customerUuid: null, sessionId: self::SESSION_ID);
+it('returns a new cart for a guest', function () {
+    (new InitializeCart)(new CartIdentifiers(
+        customerUuid: null,
+        sessionId: session()->getId()
+    ));
 
-        $this->assertTrue($existingCart->is($event->getCart()));
-    }
+    assertDatabaseCount('carts', 1);
+});
 
-    // public function test_it_creates_new_cart_with_session_id(): void
-    // {
-    //     $this->assertDatabaseCount('carts', 0);
+it('cannot initialize a cart without a session id or a customer uuid', function () {
+    (new InitializeCart)(new CartIdentifiers(
+        customerUuid: null,
+        sessionId: null
+    ));
+})->throws(InvalidParameterException::class);
 
-    //     $action = new InitializeCart();
-    //     $result = $action(null, self::SESSION_ID);
+it('does not create a cart if one already exists', function () {
+    $customerUuid = Str::uuid()->toString();
 
-    //     $this->assertNotNull($result);
-    //     $this->assertDatabaseHas('carts', [
-    //         'uuid' => $result->uuid,
-    //         'customer_uuid' => null,
-    //         'session_id' => self::SESSION_ID,
-    //     ]);
-    //     $this->assertDatabaseCount('carts', 1);
-    // }
+    $existingCart = CartFactory::new()
+        ->withCustomerUuid($customerUuid)
+        ->create();
 
-    // public function test_it_creates_new_cart_with_customer_uuid(): void
-    // {
-    //     $this->assertDatabaseCount('carts', 0);
+    assertDatabaseCount('carts', 1);
 
-    //     $action = new InitializeCart();
-    //     $result = $action(self::CUSTOMER_UUID, null);
+    $cart = (new InitializeCart)(new CartIdentifiers(
+        customerUuid: $customerUuid,
+        sessionId: null
+    ));
 
-    //     $this->assertNotNull($result);
-    //     $this->assertDatabaseHas('carts', [
-    //         'uuid' => $result->uuid,
-    //         'customer_uuid' => self::CUSTOMER_UUID,
-    //         'session_id' => null,
-    //     ]);
-    //     $this->assertDatabaseCount('carts', 1);
-    // }
-}
+    assertDatabaseCount('carts', 1);
+    expect($cart->uuid)->toBe($existingCart->uuid);
+});
+
+it('returns an existing cart for a registered customer', function () {
+    $customerUuid = Str::uuid()->toString();
+
+    $existingCart = CartFactory::new()
+        ->withCustomerUuid($customerUuid)
+        ->create();
+
+    $cart = (new InitializeCart)(new CartIdentifiers(
+        customerUuid: $customerUuid,
+        sessionId: null
+    ));
+
+    expect($cart->uuid)->toBe($existingCart->uuid);
+});
