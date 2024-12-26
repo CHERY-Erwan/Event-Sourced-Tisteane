@@ -4,7 +4,8 @@ namespace Tests\Unit\Domains\Cart;
 
 use App\Domains\Cart\CartAggregateRoot;
 use App\Domains\Cart\Events\CartInitialized;
-use LogicException;
+use App\Domains\Cart\Projectors\CartProjector;
+use App\Domains\Shared\ValueObjects\CartIdentifiers;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
 use Tests\TestCase;
 
@@ -17,7 +18,7 @@ class CartAggregateRootTest extends TestCase
     {
         CartAggregateRoot::fake(self::CART_UUID)
             ->given([])
-            ->when(fn(CartAggregateRoot $aggregate) => $aggregate->initializeCart(null, self::FAKE_SESSION_ID))
+            ->when(fn(CartAggregateRoot $aggregate) => $aggregate->initializeCart(CartIdentifiers::with(null, self::FAKE_SESSION_ID)))
             ->assertRecorded([
                 new CartInitialized(null, self::FAKE_SESSION_ID),
             ]);
@@ -30,6 +31,18 @@ class CartAggregateRootTest extends TestCase
 
         CartAggregateRoot::fake(self::CART_UUID)
             ->given([])
-            ->when(fn(CartAggregateRoot $aggregate) => $aggregate->initializeCart(null, null));
+            ->when(fn(CartAggregateRoot $aggregate) => $aggregate->initializeCart(CartIdentifiers::with(null, null)));
+    }
+
+    public function test_cart_projection_is_created_when_cart_is_initialized(): void
+    {
+        $event = new CartInitialized('customer-uuid', 'session-id');
+        CartProjector::handle($event);
+
+        $this->assertDatabaseHas('carts', [
+            'uuid' => $event->aggregateRootUuid(),
+            'customer_uuid' => 'customer-uuid',
+            'session_id' => 'session-id',
+        ]);
     }
 }

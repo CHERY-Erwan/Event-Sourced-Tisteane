@@ -4,27 +4,35 @@ namespace App\Domains\Cart\Actions;
 
 use App\Domains\Cart\CartAggregateRoot;
 use App\Domains\Cart\Projections\Cart;
+use App\Domains\Shared\ValueObjects\CartIdentifiers;
 use Illuminate\Support\Str;
+use LogicException;
 
-class InitializeCart
+final class InitializeCart
 {
-    public function __invoke(?string $customerUuid, ?string $sessionId): Cart
+    public function __invoke(CartIdentifiers $cartIdentifiers): Cart
     {
         $existingCart = Cart::query()
-            ->when($customerUuid, fn($query) => $query->where('customer_uuid', $customerUuid))
-            ->when($sessionId, fn($query) => $query->where('session_id', $sessionId))
+            ->when($cartIdentifiers->isRegisteredUser(), fn($query) => $query->where('customer_uuid', $cartIdentifiers->customerUuid))
+            ->when($cartIdentifiers->isGuest(), fn($query) => $query->where('session_id', $cartIdentifiers->sessionId))
             ->first();
 
         if ($existingCart) {
             return $existingCart;
         }
 
-        $cartUuid = Str::uuid();
+        $cartUuid = Str::uuid()->toString();
 
-        CartAggregateRoot::retrieve($cartUuid)
-            ->initializeCart($customerUuid, $sessionId)
+        CartAggregateRoot::retrieve(uuid: $cartUuid)
+            ->initializeCart(cartIdentifiers: $cartIdentifiers)
             ->persist();
 
-        return Cart::find($cartUuid);
+        $cart = Cart::findOrFail($cartUuid);
+
+        if (!$cart) {
+            throw new LogicException('Cart not initialized.');
+        }
+
+        return $cart;
     }
 }

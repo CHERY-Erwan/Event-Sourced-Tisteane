@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TestController;
 
-Route::view('/', 'welcome');
+Route::get('/', [TestController::class, 'index'])->name('test');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

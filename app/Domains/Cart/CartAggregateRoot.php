@@ -4,6 +4,7 @@ namespace App\Domains\Cart;
 
 use LogicException;
 use App\Domains\Cart\Events\CartInitialized;
+use App\Domains\Shared\ValueObjects\CartIdentifiers;
 use Spatie\EventSourcing\AggregateRoots\AggregateRoot;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
 
@@ -21,19 +22,15 @@ class CartAggregateRoot extends AggregateRoot
      * @throws LogicException
      * @throws InvalidParameterException
      */
-    public function initializeCart(?string $customerUuid, ?string $sessionId): self
+    public function initializeCart(CartIdentifiers $cartIdentifiers): self
     {
         if ($this->customerUuid || $this->sessionId) {
             throw new LogicException('Cart is already initialized');
         }
 
-        if (!$customerUuid && !$sessionId) {
-            throw new InvalidParameterException('Customer UUID or Session ID is required');
-        }
-
         $this->recordThat(new CartInitialized(
-            customerUuid: $customerUuid,
-            sessionId: $sessionId,
+            customerUuid: $cartIdentifiers->customerUuid,
+            sessionId: $cartIdentifiers->sessionId,
         ));
 
         return $this;
