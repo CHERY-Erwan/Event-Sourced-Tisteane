@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domains\Cart\Projections;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\EventSourcing\Projections\Projection;
 
 /**
- * @property string $uuid
  * @property string $cart_uuid
  * @property string $product_variant_uuid
  * @property string $bundle_uuid
@@ -16,9 +16,7 @@ use Spatie\EventSourcing\Projections\Projection;
  */
 class CartItem extends Projection
 {
-    use HasUuids;
-
-    protected $fillable = ['uuid', 'cart_uuid', 'product_variant_uuid', 'bundle_uuid', 'quantity'];
+    protected $fillable = ['cart_uuid', 'product_variant_uuid', 'bundle_uuid', 'quantity'];
 
     public function cart(): BelongsTo
     {

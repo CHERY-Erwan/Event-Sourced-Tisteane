@@ -2,13 +2,26 @@
 
 namespace App\Models;
 
-use App\Enums\Color;
-use App\Enums\Size;
+use App\Domains\Shared\Casts\PriceCast;
+use App\Domains\Shared\ValueObjects\Price;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * @property string $uuid
+ * @property string $product_uuid
+ * @property string $sku
+ * @property string $slug
+ * @property string $size
+ * @property string $color
+ * @property Price $price
+ * @property bool $is_active
+ * @property-read Product $product
+ * @property-read Collection<ProductAttribute> $attributes
+ */
 class ProductVariant extends Model
 {
     use HasFactory;
@@ -22,8 +35,7 @@ class ProductVariant extends Model
     public $translatable = ['size', 'color'];
 
     protected $casts = [
-        'size' => Size::class,
-        'color' => Color::class,
+        'price' => PriceCast::class,
     ];
 
     public function product()

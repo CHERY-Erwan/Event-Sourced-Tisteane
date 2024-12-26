@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Domains\Shared\ValueObjects\Price;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use App\Models\Product;
@@ -19,7 +20,7 @@ class ProductVariantSeeder extends Seeder
                 'slug' => 'leonardo-solar-lamp-red-small',
                 'size' => ['en' => 'Small', 'fr' => 'Petit'],
                 'color' => ['en' => 'Purple Red', 'fr' => 'Rouge pourpre'],
-                'price' => 1999,
+                'price' => Price::from(1999),
                 'is_active' => true,
             ],
             [
@@ -29,7 +30,7 @@ class ProductVariantSeeder extends Seeder
                 'slug' => 'leonardo-solar-lamp-blue-small',
                 'size' => ['en' => 'Small', 'fr' => 'Petit'],
                 'color' => ['en' => 'Azure Blue', 'fr' => 'Bleu azure'],
-                'price' => 1499,
+                'price' => Price::from(1499),
                 'is_active' => true,
             ],
             [
@@ -39,7 +40,7 @@ class ProductVariantSeeder extends Seeder
                 'slug' => 'leonardo-solar-lamp-red-medium',
                 'size' => ['en' => 'Medium', 'fr' => 'Moyen'],
                 'color' => ['en' => 'Purple Red', 'fr' => 'Rouge pourpre'],
-                'price' => 2499,
+                'price' => Price::from(2499),
                 'is_active' => true,
             ],
         ];

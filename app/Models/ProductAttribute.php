@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property string $product_variant_uuid
+ * @property string $key
+ * @property string $value
+ * @property-read ProductVariant $variant
+ */
 class ProductAttribute extends Model
 {
     use HasFactory;

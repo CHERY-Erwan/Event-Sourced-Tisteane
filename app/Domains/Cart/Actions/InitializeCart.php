@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domains\Cart\Actions;
 
 use App\Domains\Cart\CartAggregateRoot;
 use App\Domains\Cart\Projections\Cart;
 use App\Domains\Shared\ValueObjects\CartIdentifiers;
 use Illuminate\Support\Str;
-use LogicException;
 
 final class InitializeCart
 {
@@ -27,11 +28,8 @@ final class InitializeCart
             ->initializeCart(cartIdentifiers: $cartIdentifiers)
             ->persist();
 
-        $cart = Cart::findOrFail($cartUuid);
-
-        if (!$cart) {
-            throw new LogicException('Cart not initialized.');
-        }
+        $cart = Cart::query()
+            ->find($cartUuid);
 
         return $cart;
     }

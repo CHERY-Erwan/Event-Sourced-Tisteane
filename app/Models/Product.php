@@ -7,7 +7,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * @property string $uuid
+ * @property string $category_uuid
+ * @property string $sku
+ * @property string $slug
+ * @property string $label
+ * @property string $description
+ * @property int $stock
+ * @property bool $is_active
+ * @property bool $is_featured
+ * @property-read Collection<ProductVariant> $variants
+ * @property-read Collection<ProductAttribute> $attributes
+ */
 class Product extends Model
 {
     use HasFactory;
