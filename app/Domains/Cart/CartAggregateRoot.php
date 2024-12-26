@@ -19,7 +19,8 @@ class CartAggregateRoot extends AggregateRoot
     public function initializeCart(CartIdentifiers $cartIdentifiers): self
     {
         $this->recordThat(new CartInitialized(
-            cartIdentifiers: $cartIdentifiers,
+            customerUuid: $cartIdentifiers->customerUuid(),
+            sessionId: $cartIdentifiers->sessionId(),
         ));
 
         return $this;
@@ -32,6 +33,9 @@ class CartAggregateRoot extends AggregateRoot
      */
     protected function applyCartInitialized(CartInitialized $event): void
     {
-        $this->cartIdentifiers = $event->cartIdentifiers;
+        $this->cartIdentifiers = new CartIdentifiers(
+            customerUuid: $event->customerUuid,
+            sessionId: $event->sessionId,
+        );
     }
 }
