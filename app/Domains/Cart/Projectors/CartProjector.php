@@ -60,6 +60,11 @@ class CartProjector extends Projector
                     CartAggregateRoot::PRODUCT_QUANTITY_UPDATED_TYPE_REMOVE => $cartItem->decrement('quantity', $event->quantity),
                     CartAggregateRoot::PRODUCT_QUANTITY_UPDATED_TYPE_UPDATE => $cartItem->update(['quantity' => $event->quantity]),
                 };
+            })
+            ->tap(function ($cartItem) {
+                if ($cartItem->value('quantity') <= 0) {
+                    $cartItem->delete();
+                }
             });
     }
 
