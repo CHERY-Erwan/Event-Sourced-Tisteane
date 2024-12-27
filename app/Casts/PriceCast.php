@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domains\Shared\Casts;
+namespace App\Casts;
 
 use App\Domains\Shared\ValueObjects\Price;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
