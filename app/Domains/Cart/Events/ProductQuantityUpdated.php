@@ -6,11 +6,11 @@ namespace App\Domains\Cart\Events;
 
 use Spatie\EventSourcing\StoredEvents\ShouldBeStored;
 
-class ProductAddedToCart extends ShouldBeStored
+class ProductQuantityUpdated extends ShouldBeStored
 {
     public function __construct(
         public string $productVariantUuid,
-        public int $price,
         public int $quantity,
+        public string $type,
     ) {}
 }

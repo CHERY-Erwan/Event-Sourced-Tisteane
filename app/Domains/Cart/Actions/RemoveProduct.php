@@ -6,18 +6,15 @@ namespace App\Domains\Cart\Actions;
 
 use App\Domains\Cart\CartAggregateRoot;
 use App\Domains\Cart\Projections\Cart;
-use App\Domains\Shared\ValueObjects\ProductQuantity;
 use App\Models\ProductVariant;
 
-final class AddProductToCart
+final class RemoveProduct
 {
-    public function __invoke(Cart $cart, ProductVariant $productVariant, ProductQuantity $quantity): Cart
+    public function __invoke(Cart $cart, ProductVariant $productVariant): Cart
     {
         CartAggregateRoot::retrieve(uuid: $cart->uuid)
-            ->addProduct(
+            ->removeProduct(
                 productVariantUuid: $productVariant->uuid,
-                quantity: $quantity,
-                price: $productVariant->price,
             )
             ->persist();
 

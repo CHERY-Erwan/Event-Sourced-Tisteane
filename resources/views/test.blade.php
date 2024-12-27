@@ -20,8 +20,31 @@
             {{ $cart->uuid }}
         </div>
         <h2>Items:</h2>
-        <div>
-            {{ $cart->items }}
+        <div class="flex flex-col gap-10">
+            @foreach ($cart->items as $item)
+                <div class="p-4 bg-gray-100 rounded-md">
+                    Product: {{ $item->productVariant->slug }}<br>
+                    Bundle: {{ $item->bundle_uuid }}<br>
+                    Quantity: {{ $item->quantity }}
+
+                    <form action="{{ route('update-item-quantity') }}" method="POST" class="mt-4">
+                        @csrf
+                        <input type="number" name="quantity" value="{{ $item->quantity }}">
+                        <input type="hidden" name="item_uuid" value="{{ $item->product_variant_uuid }}">
+                        <button type="submit" class="bg-blue-500 text-white p-3 rounded-md ml-2">
+                            Update quantity
+                        </button>
+                    </form>
+
+                    <form action="{{ route('remove-item') }}" method="POST" class="mt-4">
+                        @csrf
+                        <input type="hidden" name="item_uuid" value="{{ $item->product_variant_uuid }}">
+                        <button type="submit" class="bg-red-500 text-white p-3 rounded-md ml-2">
+                            Remove item
+                        </button>
+                    </form>
+                </div>
+            @endforeach
         </div>
 
         <form action="{{ route('add-item') }}" method="POST" class="mt-10">

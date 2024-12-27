@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Domains\Cart;
 
 use App\Domains\Cart\Events\CartInitialized;
-use App\Domains\Cart\Events\ProductAddedToCart;
-use App\Domains\Cart\Projections\Cart;
+use App\Domains\Cart\Events\ProductAdded;
+use App\Domains\Cart\Events\ProductQuantityUpdated;
+use App\Domains\Cart\Events\ProductRemoved;
+use App\Domains\Cart\Projections\CartItem;
 use App\Domains\Shared\ValueObjects\CartIdentifiers;
 use App\Domains\Shared\ValueObjects\Price;
 use App\Domains\Shared\ValueObjects\ProductQuantity;
@@ -14,8 +16,14 @@ use Spatie\EventSourcing\AggregateRoots\AggregateRoot;
 
 class CartAggregateRoot extends AggregateRoot
 {
-    protected CartIdentifiers $cartIdentifiers;
-    protected Cart $cart;
+    public CartIdentifiers $cartIdentifiers;
+
+    /** @var array<string, CartItem> */
+    public array $cartItems = [];
+
+    public const PRODUCT_QUANTITY_UPDATED_TYPE_ADD = 'add';
+    public const PRODUCT_QUANTITY_UPDATED_TYPE_REMOVE = 'remove';
+    public const PRODUCT_QUANTITY_UPDATED_TYPE_UPDATE = 'update';
 
     /**
      * Initialise un panier pour un client ou une session.
@@ -43,7 +51,17 @@ class CartAggregateRoot extends AggregateRoot
      */
     public function addProduct(string $productVariantUuid, ProductQuantity $quantity, Price $price): self
     {
-        $this->recordThat(new ProductAddedToCart(
+        if (isset($this->cartItems[$productVariantUuid])) {
+            $this->recordThat(new ProductQuantityUpdated(
+                productVariantUuid: $productVariantUuid,
+                type: self::PRODUCT_QUANTITY_UPDATED_TYPE_ADD,
+                quantity: $quantity->quantity(),
+            ));
+
+            return $this;
+        }
+
+        $this->recordThat(new ProductAdded(
             productVariantUuid: $productVariantUuid,
             quantity: $quantity->quantity(),
             price: $price->amount(),
@@ -53,9 +71,43 @@ class CartAggregateRoot extends AggregateRoot
     }
 
     /**
+     * Met à jour la quantité d'un item du panier.
+     *
+     * @param string $productVariantUuid
+     * @param ProductQuantity $quantity
+     * @return self
+     */
+    public function updateProductQuantity(string $productVariantUuid, ProductQuantity $quantity): self
+    {
+        $this->recordThat(new ProductQuantityUpdated(
+            productVariantUuid: $productVariantUuid,
+            type: self::PRODUCT_QUANTITY_UPDATED_TYPE_UPDATE,
+            quantity: $quantity->quantity(),
+        ));
+
+        return $this;
+    }
+
+    /**
+     * Supprime un item du panier.
+     *
+     * @param string $productVariantUuid
+     * @return self
+     */
+    public function removeProduct(string $productVariantUuid): self
+    {
+        $this->recordThat(new ProductRemoved(
+            productVariantUuid: $productVariantUuid,
+        ));
+
+        return $this;
+    }
+
+    /**
      * Applique les effets de l'événement `CartInitialized`.
      *
      * @param CartInitialized $event
+     * @return void
      */
     protected function applyCartInitialized(CartInitialized $event): void
     {
@@ -63,5 +115,44 @@ class CartAggregateRoot extends AggregateRoot
             customerUuid: $event->customerUuid,
             sessionId: $event->sessionId,
         );
+    }
+
+    /**
+     * @param ProductAdded $event
+     * @return void
+     */
+    protected function applyProductAdded(ProductAdded $event): void
+    {
+        $this->cartItems[$event->productVariantUuid] = [
+            'productVariantUuid' => $event->productVariantUuid,
+            'quantity' => $event->quantity,
+            'price' => $event->price,
+        ];
+    }
+
+    /**
+     * @param ProductQuantityUpdated $event
+     * @return void
+     */
+    protected function applyProductQuantityUpdated(ProductQuantityUpdated $event): void
+    {
+        match ($event->type) {
+            self::PRODUCT_QUANTITY_UPDATED_TYPE_ADD => $this->cartItems[$event->productVariantUuid]['quantity'] += $event->quantity,
+            self::PRODUCT_QUANTITY_UPDATED_TYPE_REMOVE => $this->cartItems[$event->productVariantUuid]['quantity'] -= $event->quantity,
+            self::PRODUCT_QUANTITY_UPDATED_TYPE_UPDATE => $this->cartItems[$event->productVariantUuid]['quantity'] = $event->quantity,
+        };
+
+        if ($this->cartItems[$event->productVariantUuid]['quantity'] <= 0) {
+            unset($this->cartItems[$event->productVariantUuid]);
+        }
+    }
+
+    /**
+     * @param ProductRemoved $event
+     * @return void
+     */
+    protected function applyProductRemoved(ProductRemoved $event): void
+    {
+        unset($this->cartItems[$event->productVariantUuid]);
     }
 }

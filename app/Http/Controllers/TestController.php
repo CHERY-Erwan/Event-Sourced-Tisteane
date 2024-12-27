@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Domains\Cart\Actions\AddProductToCart;
+use App\Domains\Cart\Actions\AddProduct;
 use App\Domains\Cart\Actions\InitializeCart;
+use App\Domains\Cart\Actions\RemoveProduct;
+use App\Domains\Cart\Actions\UpdateProductQuantity;
+use App\Domains\Cart\Projections\CartItem;
 use App\Domains\Shared\ValueObjects\CartIdentifiers;
 use App\Domains\Shared\ValueObjects\ProductQuantity;
 use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\ProductVariant;
+use Illuminate\Http\Request;
 
 class TestController extends Controller
 {
@@ -32,7 +36,7 @@ class TestController extends Controller
         $product = Product::where('sku', 'LEO-001')->first();
 
         /** @var ProductVariant $variant */
-        $variant = $product?->variants()?->first();
+        $variant = $product?->variants()->where('sku', 'LEO-S-BLUE')->first();
 
         /** @var ProductAttribute $attribute */
         $attribute = $variant?->attributes()?->first();
@@ -44,10 +48,10 @@ class TestController extends Controller
             )
         );
 
-        $cart = (new AddProductToCart)(
+        $cart = (new AddProduct)(
             cart: $cart,
             productVariant: $variant,
-            quantity: ProductQuantity::from(12)
+            quantity: ProductQuantity::from(2)
         );
 
         dd($cart);
@@ -56,5 +60,30 @@ class TestController extends Controller
     public function addBundle()
     {
         dd('addBundle');
+    }
+
+    public function updateItemQuantity(Request $request)
+    {
+        $item = CartItem::query()->where('product_variant_uuid', $request->item_uuid)->first();
+
+        $cart = (new UpdateProductQuantity)(
+            cart: $item->cart,
+            productVariant: $item->productVariant,
+            quantity: ProductQuantity::from((int) $request->quantity)
+        );
+
+        return redirect()->route('test');
+    }
+
+    public function removeItem(Request $request)
+    {
+        $item = CartItem::query()->where('product_variant_uuid', $request->item_uuid)->first();
+
+        $cart = (new RemoveProduct)(
+            cart: $item->cart,
+            productVariant: $item->productVariant,
+        );
+
+        return redirect()->route('test');
     }
 }
