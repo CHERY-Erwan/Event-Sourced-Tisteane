@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Domains\Shared\Casts\PriceCast;
+use App\Casts\PriceCast;
 use App\Domains\Shared\ValueObjects\Price;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
