@@ -54,7 +54,6 @@ class CartAggregateRoot extends AggregateRoot
         if (isset($this->cartItems[$productVariantUuid])) {
             $this->recordThat(new ProductQuantityUpdated(
                 productVariantUuid: $productVariantUuid,
-                type: self::PRODUCT_QUANTITY_UPDATED_TYPE_ADD,
                 quantity: $quantity->quantity(),
             ));
 
@@ -79,9 +78,16 @@ class CartAggregateRoot extends AggregateRoot
      */
     public function updateProductQuantity(string $productVariantUuid, ProductQuantity $quantity): self
     {
+        if ($quantity->isZero()) {
+            $this->recordThat(new ProductRemoved(
+                productVariantUuid: $productVariantUuid,
+            ));
+
+            return $this;
+        }
+
         $this->recordThat(new ProductQuantityUpdated(
             productVariantUuid: $productVariantUuid,
-            type: self::PRODUCT_QUANTITY_UPDATED_TYPE_UPDATE,
             quantity: $quantity->quantity(),
         ));
 
@@ -136,15 +142,13 @@ class CartAggregateRoot extends AggregateRoot
      */
     protected function applyProductQuantityUpdated(ProductQuantityUpdated $event): void
     {
-        match ($event->type) {
-            self::PRODUCT_QUANTITY_UPDATED_TYPE_ADD => $this->cartItems[$event->productVariantUuid]['quantity'] += $event->quantity,
-            self::PRODUCT_QUANTITY_UPDATED_TYPE_REMOVE => $this->cartItems[$event->productVariantUuid]['quantity'] -= $event->quantity,
-            self::PRODUCT_QUANTITY_UPDATED_TYPE_UPDATE => $this->cartItems[$event->productVariantUuid]['quantity'] = $event->quantity,
-        };
-
-        if ($this->cartItems[$event->productVariantUuid]['quantity'] <= 0) {
+        if ($event->quantity === 0) {
             unset($this->cartItems[$event->productVariantUuid]);
+
+            return;
         }
+
+        $this->cartItems[$event->productVariantUuid]['quantity'] = $event->quantity;
     }
 
     /**

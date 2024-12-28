@@ -10,16 +10,18 @@ use Symfony\Component\Routing\Exception\InvalidParameterException;
 use Tests\Unit\Domains\Cart\Factories\CartFactory;
 
 use function Pest\Laravel\assertDatabaseCount;
+use function PHPUnit\Framework\assertEquals;
 
 uses(RefreshDatabase::class);
 
 it('returns a new cart for a guest', function () {
-    (new InitializeCart)(new CartIdentifiers(
+    $cart = (new InitializeCart)(new CartIdentifiers(
         customerUuid: null,
         sessionId: session()->getId()
     ));
 
-    assertDatabaseCount('carts', 1);
+    assertEquals($cart->customer_uuid, null);
+    assertEquals($cart->session_id, session()->getId());
 });
 
 it('cannot initialize a cart without a session id or a customer uuid', function () {

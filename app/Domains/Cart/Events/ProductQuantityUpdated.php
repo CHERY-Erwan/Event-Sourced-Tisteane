@@ -11,6 +11,5 @@ class ProductQuantityUpdated extends ShouldBeStored
     public function __construct(
         public string $productVariantUuid,
         public int $quantity,
-        public string $type,
     ) {}
 }

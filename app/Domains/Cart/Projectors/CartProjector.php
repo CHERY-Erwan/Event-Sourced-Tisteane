@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domains\Cart\Projectors;
 
-use App\Domains\Cart\CartAggregateRoot;
 use App\Domains\Cart\Projections\Cart;
 use App\Domains\Cart\Events\CartInitialized;
 use App\Domains\Cart\Events\ProductAdded;
@@ -55,16 +54,7 @@ class CartProjector extends Projector
         CartItem::query()
             ->where('product_variant_uuid', $event->productVariantUuid)
             ->tap(function ($cartItem) use ($event) {
-                match ($event->type) {
-                    CartAggregateRoot::PRODUCT_QUANTITY_UPDATED_TYPE_ADD => $cartItem->increment('quantity', $event->quantity),
-                    CartAggregateRoot::PRODUCT_QUANTITY_UPDATED_TYPE_REMOVE => $cartItem->decrement('quantity', $event->quantity),
-                    CartAggregateRoot::PRODUCT_QUANTITY_UPDATED_TYPE_UPDATE => $cartItem->update(['quantity' => $event->quantity]),
-                };
-            })
-            ->tap(function ($cartItem) {
-                if ($cartItem->value('quantity') <= 0) {
-                    $cartItem->delete();
-                }
+                $cartItem->update(['quantity' => $event->quantity]);
             });
     }
 
